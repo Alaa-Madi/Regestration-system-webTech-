@@ -1,0 +1,4 @@
+{{extend 'layout.html'}}
+<form method="post" action="{{=URL('search')}}">
+ {{=SQLFORM.grid(query=db.courses, csv=False, user_signature=False)}}
+</form>

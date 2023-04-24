@@ -1,0 +1,32 @@
+{{extend 'layout.html'}}
+<table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">code</th>
+        <th scope="col">name</th>
+        <th scope="col">instructor</th>
+        <th scope="col">capacity</th>
+        <th scope="col">days</th>
+        <th scope="col">starttime</th>
+        <th scope="col">endtime</th>
+        <th scope="col">roomno</th>
+      </tr>
+    </thead>
+    <tbody>
+        {{for rows in row:}}
+      <tr>
+        <td>{{=rows['code']}}</td>
+        <td>{{=rows['name']}}</td>
+        <td>{{=rows['instructor']}}</td>
+        <td>{{=rows['capacity']}}</td>
+        <td>{{=rows['days']}}</td>
+        <td>{{=rows['startTime']}}</td>
+        <td>{{=rows['endTime']}}</td>
+        <td>{{=rows['RoomNo']}}</td>
+
+      </tr>
+      {{pass}}
+    </tbody>
+  </table>
+  
+  

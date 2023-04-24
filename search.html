@@ -1,0 +1,90 @@
+{{extend 'layout.html'}}
+<head>
+    <script>
+        document.getElementsByClassName("btn").onclick=function(){
+         document.getElementById('table').style.visibility = "visible";
+        }
+    
+    </script>
+</head>
+<div class='container'>
+ <input class="search" type="search" placeholder="search for course..." name="search">
+ <button class="btn btn-primary mb-4"> Search</button>
+ <table class="table" hidden>
+    <thead class="thead">
+      <tr>
+        <th scope="col">code</th>
+        <th scope="col">name</th>
+        <th scope="col">description</th>
+        <th scope="col">prerequisites</th>
+        <th scope="col">schedule</th>
+      </tr>
+    </thead>
+    <tbody>
+        {{for record in records:}}
+        <tr>
+            <td>{{=record['code']}}</td>
+            <td>{{=record['name']}}</td>
+            <td>{{=record['instructor']}}</td>
+            <td>{{=record['prerequisites']}}</td>
+            <td>{{=record['capacity']}}</td>
+            <td>{{=record['schedlued']}}</td>
+        </tr>
+        {{pass}}
+      
+    </tbody>
+  </table>
+</div>
+<style>
+    
+    body {
+    margin: 0;
+    font-family: "DM Sans";
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #000000;
+    text-align: left;
+    background-color: beige;
+    background-size: cover;
+    }
+    .container{
+        width: 1000px;
+        height: 1000px;
+        margin-top: 100px;
+        margin-left: 300px;
+        
+    }
+    .search{
+        width:400px;
+        height: 40px;
+        margin-top: 60px;
+        margin-left: 160px;
+        padding-left: 40px;
+        font-size: 25px;
+        border-radius: 10px;
+        background-image: url("https://cdn-icons-png.flaticon.com/512/10176/10176400.png");
+        background-repeat: no-repeat;
+        background-size: 40px;
+
+    }
+    .btn{
+        width:130px;
+        height: 40px;
+        background-color:burlywood;
+        font-size: 20px;
+        border-radius: 10px;
+        margin-left: 20px;
+        margin-top: 20px;
+        color: #000000;
+    }
+    .btn:hover{
+        background-color:rgb(218, 193, 160); 
+}
+
+</style>
+
+
+
+
+

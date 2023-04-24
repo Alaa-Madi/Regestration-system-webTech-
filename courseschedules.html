@@ -1,0 +1,41 @@
+{{extend 'layout.html'}}
+<table class="table">
+    <thead class="thead">
+      <tr>
+        <th scope="col">course id</th>
+        <th scope="col">days</th>
+        <th scope="col">start time</th>
+        <th scope="col">end time</th>
+        <th scope="col">RoomNo</th>
+      </tr>
+    </thead>
+    <tbody>
+        {{for schedules in schedules:}}
+        <tr>
+            <td>{{=schedules['code']}}</td>
+            <td>{{=schedules['name']}}</td>
+            <td>{{=schedules['instructor']}}</td>
+            <td>{{=schedules['capacity']}}</td>
+            <td>{{=schedules['ID']}}</td>
+        </tr>
+        {{pass}}
+    </tbody>
+  </table>
+  <style>
+    body {
+    margin: 0;
+    font-family: "DM Sans";
+    font-size: 1rem;
+    color: #000000;
+    text-align: left;
+    background-color: beige;
+    background-size: cover;
+    }
+    .thead {
+  background-color:burlywood;
+  color: black;
+  font-size: 20px;
+}
+    
+  </style>
+  
