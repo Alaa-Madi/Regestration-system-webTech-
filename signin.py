@@ -18,6 +18,7 @@ def Addcourse():
     id =request.args(0)
     result=db(db.studentschedules.id==id).select() # check if courses exist or not 
     day=db.executesql('select startTime , days from studentschedules')
+    day=tuple(tuple(str(element) for element in inner_tuple) for inner_tuple in day)
     if not result:
         res=complete(id)
         if res:
@@ -26,16 +27,16 @@ def Addcourse():
                 b=(db.courses(id).scheduled) # b: have the courses schedule id 
                 c=db.coursesschedules(db.courses(id).scheduled) # c: have the days,start,end times of request
                 index=0 
-                cc=(c.startTime,c.days) # tuple have the new course regestration to be added
-                for i in day:
-                    for r in day[index]:
-                        if(cc == r ):
-                            aa=False
-                            print(550)
-                            response.flash='This course conflicts with another course ):'
-                            return locals()
-                    index=index+1
+                cc=(str(c.startTime),c.days) # tuple have the new course regestration to be added
                 aa=True
+                for i in day:
+                    if( cc[0] == '0'+i[0] and cc[1]==i[1]):
+                        print(123)
+                        aa=False
+                        response.flash='The course conflict with other course'
+                        return locals()
+                        break
+    
                 if(aa):
                     db.studentschedules.insert(code=a.code, id=a.id,name=a.name,
                     instructor=a.instructor,capacity=a.capacity,days=c.days,
