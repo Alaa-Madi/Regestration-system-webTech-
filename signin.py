@@ -4,34 +4,38 @@ import datetime
 # to view the courses that students add   
 @auth.requires_login()
 def Schedule():
-    grid=SQLFORM.grid(db.studentschedules,deletable=False,editable=False,csv=False,searchable=False)
+    user_id=auth.user.id
+    print(id)
+    grid=SQLFORM.grid(db.studentschedules.student_id==db.students(user_id),fields=[db.students.first_name,db.studentschedules.code,db.studentschedules.name,db.studentschedules.instructor,db.studentschedules.capacity,db.studentschedules.days,db.studentschedules.startTime,db.studentschedules.endTime,db.studentschedules.RoomNo],deletable=False,editable=False,csv=False,searchable=False)
     return dict(grid=grid)
 
 # home page
 # @auth.requires_login()
 def home():
+    name=db.students(auth.user.id).first_name
+    response.flash=f'welcome back {name} :)'
     return locals()
 
 # when user click in addcourse button in registeration then will check the capacity,time,days and then add it in schedule
 @auth.requires_login()
 def Addcourse(): 
     id =request.args(0)
-    result=db(db.studentschedules.id==id).select() # check if courses exist or not 
-    day=db.executesql('select startTime , days from studentschedules')
+    result=db((db.studentschedules.id==id)&(db.studentschedules.student_id==auth.user.id)).select() # check if courses exist or not 
+    user_id=auth.user.id
+    day=db.executesql(f'select startTime , days from studentschedules where student_id={user_id}')
     day=tuple(tuple(str(element) for element in inner_tuple) for inner_tuple in day)
+    print(day)
     if not result:
         res=complete(id)
         if res:
             if  db.courses(id).capacity !=0:
-                a=db.courses(id) # a: have courses requerst information 
+                a=db.courses(id) # a: have courses request information 
                 b=(db.courses(id).scheduled) # b: have the courses schedule id 
                 c=db.coursesschedules(db.courses(id).scheduled) # c: have the days,start,end times of request
-                index=0 
                 cc=(str(c.startTime),c.days) # tuple have the new course regestration to be added
                 aa=True
                 for i in day:
-                    if( cc[0] == '0'+i[0] and cc[1]==i[1]):
-                        print(123)
+                    if( (cc[0] == '0'+i[0] and cc[1]==i[1]) or (cc[0]==i[0] and cc[1]==i[1])):
                         aa=False
                         response.flash='The course conflict with other course'
                         return locals()
@@ -40,7 +44,7 @@ def Addcourse():
                 if(aa):
                     db.studentschedules.insert(code=a.code, id=a.id,name=a.name,
                     instructor=a.instructor,capacity=a.capacity,days=c.days,
-                    startTime=c.startTime,endTime=c.endTime,RoomNo=c.RoomNo)
+                    startTime=c.startTime,endTime=c.endTime,RoomNo=c.RoomNo,student_id=auth.user.id)
                 # update capacity by decrement
                     db.executesql('UPDATE courses SET capacity=capacity-1 WHERE ID=%s', id)
                     response.flash='ADD success!'
