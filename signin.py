@@ -12,8 +12,7 @@ def Schedule():
 # home page
 # @auth.requires_login()
 def home():
-    name=db.students(auth.user.id).first_name
-    response.flash=f'welcome back {name} :)'
+    
     return locals()
 
 # when user click in addcourse button in registeration then will check the capacity,time,days and then add it in schedule
@@ -63,12 +62,21 @@ def Addcourse():
 
 @auth.requires_login()
 def course_regestration_deadline():
-    students = db.executesql('SELECT * FROM students')
+    from gluon.tools import Mail
+    mail = Mail()
+    mail = auth.settings.mailer
+    mail.settings.server = "smtp.gmail.com:587"
+    mail.settings.sender = "201112@ppu.edu.ps"
+    mail.settings.login = "201112@ppu.edu.ps:rlmsecrbkzxpioxn"
+    mail.settings.tls = True
+    mail.settings.ssl = False
+    students = db.executesql('select first_name,email from students')
+    message = 'Dear {name},\n\nThis is a reminder that the registration deadline for the current semester is in {deadline} . \n\nPlease make sure to complete your registration .\n\nThank you'
     for student in students:
-        mail.send(to=student.email, subject='LAST DATE FOR REGISTRATION ', message='LAST DATE FOR REGISTRATION.')
-
-    scheduler = Scheduler(db)
-    scheduler.queue_task(course_regestration_deadline, start_time=datetime.datetime(2023, 4, 7,00, 46), period=86400)
+        email_message = message.format(name=student[0], deadline='2023-05-03')
+        mail.send(to=student[1],subject='Registration Deadline Reminder',message=email_message)
+    response.flash='Email send'
+    return locals()
 
 # registeration to view the available courses 
 @auth.requires_login()
