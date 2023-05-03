@@ -6,8 +6,9 @@ import datetime
 def Schedule():
     user_id=auth.user.id
     print(id)
-    grid=SQLFORM.grid(db.studentschedules.student_id==db.students(user_id),fields=[db.students.first_name,db.studentschedules.code,db.studentschedules.name,db.studentschedules.instructor,db.studentschedules.capacity,db.studentschedules.days,db.studentschedules.startTime,db.studentschedules.endTime,db.studentschedules.RoomNo],deletable=False,editable=False,csv=False,searchable=False)
-    return dict(grid=grid)
+    grid=SQLFORM.grid(db.studentschedules.student_id==db.students(user_id),fields=[db.students.first_name,db.studentschedules.code,db.studentschedules.name,db.studentschedules.instructor,db.studentschedules.capacity,db.studentschedules.days,db.studentschedules.startTime,db.studentschedules.endTime,db.studentschedules.RoomNo],deletable=False,editable=False,csv=False,create=False,searchable=False)
+    name=db.students(user_id).first_name
+    return dict(name=name,grid=grid)
 
 # home page
 # @auth.requires_login()
