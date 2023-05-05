@@ -1,32 +1,31 @@
 from gluon.scheduler import Scheduler
 import datetime
 
-# to view the courses that students add   
-@auth.requires_login()
+# Display the courses that students added 
+@auth.requires_login()   
 def Schedule():
     user_id=auth.user.id
-    print(id)
     grid=SQLFORM.grid(db.studentschedules.student_id==db.students(user_id),fields=[db.students.first_name,db.studentschedules.code,db.studentschedules.name,db.studentschedules.instructor,db.studentschedules.capacity,db.studentschedules.days,db.studentschedules.startTime,db.studentschedules.endTime,db.studentschedules.RoomNo],deletable=False,editable=False,csv=False,create=False,searchable=False)
     name=db.students(user_id).first_name
     return dict(name=name,grid=grid)
 
 # home page
-# @auth.requires_login()
+@auth.requires_login()
 def home():
-    
     return locals()
 
-# when user click in addcourse button in registeration then will check the capacity,time,days and then add it in schedule
+
+# Add course 
 @auth.requires_login()
 def Addcourse(): 
     id =request.args(0)
+    user_id=auth.user.id
     result=db((db.studentschedules.id==id)&(db.studentschedules.student_id==auth.user.id)).select() # check if courses exist or not 
     user_id=auth.user.id
     day=db.executesql(f'select startTime , days from studentschedules where student_id={user_id}')
     day=tuple(tuple(str(element) for element in inner_tuple) for inner_tuple in day)
-    print(day)
     if not result:
-        res=complete(id)
+        res=complete(id) 
         if res:
             if  db.courses(id).capacity !=0:
                 a=db.courses(id) # a: have courses request information 
@@ -45,22 +44,24 @@ def Addcourse():
                     db.studentschedules.insert(code=a.code, id=a.id,name=a.name,
                     instructor=a.instructor,capacity=a.capacity,days=c.days,
                     startTime=c.startTime,endTime=c.endTime,RoomNo=c.RoomNo,student_id=auth.user.id)
+                    db.studentsreg.insert(studentid=user_id,courseid=a.code)
+
                 # update capacity by decrement
                     db.executesql('UPDATE courses SET capacity=capacity-1 WHERE ID=%s', id)
                     response.flash='ADD success!'
                     return locals()
             else:
-                response.flash='The course has been completed!'
+                response.flash='The course Closed'
                 return locals()
         else:
-            response.flash='prerequisits not completed yet'
+            response.flash=f'you should finish prerequisit first !'
             return locals()
     else:
-        response.flash='its already exist'
+        response.flash='its already exist in you Schedule '
         return locals()
     redirect(URL('courses_search'))
-    
-
+ 
+# Send email of deadlines to students
 @auth.requires_login()
 def course_regestration_deadline():
     from gluon.tools import Mail
@@ -79,40 +80,53 @@ def course_regestration_deadline():
     response.flash='Email send'
     return locals()
 
-# registeration to view the available courses 
+# Display available courses 
 @auth.requires_login()
 def courses_search():
     rows=db.courses.scheduled==db.coursesschedules.id
-    grid=SQLFORM.grid(db(rows),fields=[db.courses.code,db.courses.name,db.courses.instructor,db.courses.capacity,db.coursesschedules.days,db.coursesschedules.startTime,db.coursesschedules.endTime,db.coursesschedules.RoomNo,],links=[lambda row:A('Add course',_href=URL('Addcourse',args=[row.courses.id]),_class="button btn btn-secondary")],deletable=False,editable=False,csv=False)
+    grid=SQLFORM.grid(db(rows),fields=[db.courses.code,db.courses.name,db.courses.instructor,db.courses.capacity,db.coursesschedules.days,db.coursesschedules.startTime,db.coursesschedules.endTime,db.coursesschedules.RoomNo,],links=[lambda row:A('Add course',_href=URL('Addcourse',args=[row.courses.id],),_class="button btn btn-secondary")],deletable=False,editable=False,csv=False)
     return dict(grid=grid)
 
-# the specialization courses of the student
+# The specialization courses of the student
 @auth.requires_login()
 def Specialization_courses():
-    grid=SQLFORM.grid(db.courses,fields=[db.courses.id,db.courses.code,db.courses.name,db.courses.prerequisites],deletable=False,editable=False,csv=False,searchable=False,details=False)
+    grid=SQLFORM.grid(db.courses,fields=[db.courses.id,db.courses.code,db.courses.name,db.courses.prerequisites],deletable=False,editable=False,csv=False,searchable=False,details=False,create=False)
     return dict(grid=grid)
 
 
-# to show courses report
+# Display courses report
 @auth.requires_login()
 def reports(): # return from studentreg table no of people
     query=(db.studentsreg.courseid==db.courses.code) & (db.studentsreg.studentid==db.students.id)
     rows=db(query).select(db.courses.name,db.students.id.count(),groupby=db.courses.id)
     return dict(rows=rows)
 
-@auth.requires_login()
+# Check if coures's prerequisits is completed 
 def complete(id):
-    a=db.courses(id).prerequisites
-    query='select courseid from studentsreg where grade is NULL  '
-    notcompleted=db.executesql(query)
-    if a in notcompleted[0]:
-        return False
-        return locals()
+    aa=True
+    a=db.courses(id).prerequisites# '5050'
+    if a:
+        query=f'select courseid from studentsreg where grade is not NULL  and studentid={auth.user.id}'
+        completed=db.executesql(query,as_dict=True) 
+        if completed: # it is contain list of dictionary like : [{'courseid': '5273'}, {'courseid': '5051'}]     
+            for i in completed:
+                if  int(i.get('courseid')) == int(a):
+                    aa=True
+                else:
+
+                    aa=False
+            return aa
+        else:
+            return False
     else:
-        response.flash='prerequisits is completed'
-        return locals()
+        return True
+   
+# Display the student's prerequisits that completed 
 @auth.requires_login()
-def displaypre():
-    query='select courseid ,name from studentsreg s,courses c where s.grade is not NULL and s.courseid=c.code  '
-    complete=db.executesql(query,as_dict=True)
-    return dict(complete=complete)
+def display():
+    name=db.students(auth.user.id).first_name
+    query=f'select name ,courseid from courses c ,studentsreg s  where  c.code=s.courseid and  grade is not NULL  and studentid={auth.user.id}'
+    completed=db.executesql(query,as_dict=True) 
+    return dict(name=name,completed=completed)
+
+
