@@ -1,0 +1,18 @@
+{{extend 'layout1.html'}}
+<table class="table">
+    <thead style="background-color: burlywood;">
+      <tr>
+        <th scope="col">course name</th>
+        <th scope="col"># of students enrolled</th>
+      </tr>
+    </thead>
+    <tbody>
+        {{for row in rows:}}
+      <tr>
+        <td>{{=row.courses.name}}</td>
+        <td>{{=row['_extra'][str(db.students.id.count())]}}</td>
+      </tr>
+      {{pass}}
+    </tbody>
+  </table>
+  

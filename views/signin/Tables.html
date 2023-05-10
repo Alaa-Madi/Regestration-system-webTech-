@@ -1,0 +1,38 @@
+{{extend 'layout1.html'}}
+<div class="div1">
+<table class="table table-sm">
+    <thead>
+      <tr>
+        <th scope="col"> Name </th>
+        <th scope="col"> Id </th>
+        <th scope ="col">Student Tables</th>
+      </tr>
+    </thead>
+    <tbody>
+        {{for i in query:}}
+      <tr>
+        <td>{{=i['first_name']}}</td>
+        <td>{{=i['id']}}</td>
+        <td><a href="viewtable?id={{=i['id']}}">Show Tables</a></td>
+      </tr>
+    {{pass}}
+    </tbody>
+  </table>
+</div>
+<style>
+  .div1{
+    margin-top: 80px;
+    padding-left: 40px;
+    padding-right: 40px;
+    background-color:beige;
+  }
+  .table-sm td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .table-sm th {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  </style>

@@ -1,0 +1,22 @@
+<h1>{{=auth.students.first_name}}'s Schedule</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Course</th>
+            <th>Day</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{for course in schedule:}}
+        <tr>
+            <td>{{=course[0]}}</td>
+            <td>{{=course[1]}}</td>
+            <td>{{=course[2].strftime('%H:%M')}}</td>
+            <td>{{=course[3].strftime('%H:%M')}}</td>
+        </tr>
+        {{pass}}
+    </tbody>
+</table>

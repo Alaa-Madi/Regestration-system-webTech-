@@ -1,0 +1,19 @@
+{{extend 'layout1.html'}}
+<table class="table table-sm">
+    <thead>
+      <tr>
+        <th scope="col"> Name </th>
+        <th scope="col"> Id </th>
+      </tr>
+    </thead>
+    <tbody>
+        {{for i in query:}}
+      <tr>
+        <td>{{=i['first_name']}}</td>
+        <td>{{=i['id']}}</td>
+        <td><a href="viewtable?id={{=i['id']}}">Show Tables</a></td>
+      </tr>
+    {{pass}}
+    </tbody>
+  </table>
+

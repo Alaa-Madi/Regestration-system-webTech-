@@ -1,0 +1,28 @@
+{{extend 'layout.html'}}
+<h1>{{=name}}'s prerequisites Table</h1>
+<table class="table">
+    <thead style="background-color: burlywood;">
+      <tr>
+        <th scope="col">course name</th>
+        <th scope="col">course id </th>
+      </tr>
+    </thead>
+    <tbody>
+        {{for row in completed:}}
+      <tr>
+        <td>{{=row['name']}}</td>
+        <td>{{=row['courseid']}}</td>
+      </tr>
+      {{pass}}
+    </tbody>
+  </table>
+  <style>
+    h1{
+        font-size: 40px;
+        font-weight: bold;
+        color:burlywood;
+        text-align:center;
+
+    }
+</style>  
+  
