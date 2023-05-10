@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'Reg-SYSTEM-PPU'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_BC1EE91004144115825402EEB5AC3F7D }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_AD52AECEF56348FDA83540D7848A1D31 }}
