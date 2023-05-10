@@ -61,3 +61,6 @@ jobs:
           app-name: 'registration-system-for-PPU'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1BA7EAEB6F9342D2A9992C48F2650E84 }}
+      - name: Setup Python
+        uses: actions/setup-python@v4.6.0
+
